@@ -4,6 +4,8 @@ import anthony.rappo.entretien.CirilGroup.model.Forest;
 
 public interface ISimulationService {
 
-    void nextStep(Forest forest);
+    boolean nextStep(Forest forest);
+
+    void allSteps(Forest forest);
     
 }

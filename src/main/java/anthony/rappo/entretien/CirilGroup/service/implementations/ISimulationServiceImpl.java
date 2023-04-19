@@ -3,7 +3,6 @@ package anthony.rappo.entretien.CirilGroup.service.implementations;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,13 +17,29 @@ import anthony.rappo.entretien.CirilGroup.service.interfaces.ISimulationService;
 public class ISimulationServiceImpl implements ISimulationService{
 
     @Override
-    public void nextStep(Forest forest) {
+    public boolean nextStep(Forest forest) {
         Tree[][] trees = forest.getTrees();
-        burningTreesTreatment(trees,forest.getProbability());
-        setInitFireTreeToFire(trees);
+        boolean isStillBurning = burningTreesTreatment(trees,forest.getProbability());
+        if(isStillBurning) setInitFireTreeToFire(trees);
+        return isStillBurning;
     }
 
-    private void burningTreesTreatment(Tree[][] trees,float probability) {
+    @Override
+    public void allSteps(Forest forest) {
+        boolean stillBuring = true;
+        do{
+            stillBuring = nextStep(forest);
+        }while(stillBuring);
+    }
+
+    /**
+     * For all trees in fire in trees 2D Array parameter, set to EXTINCT and spread fire to neighbors with the probability passed. 
+     * @param trees
+     * @param probability
+     * @return
+     */
+    private boolean burningTreesTreatment(Tree[][] trees,float probability) {
+        boolean isStillBurning = false;
         for(int y=0;y<trees.length;y++){
             for(int x=0;x<trees[y].length;x++){
                 Tree tree = trees[y][x];
@@ -32,14 +47,20 @@ public class ISimulationServiceImpl implements ISimulationService{
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error, invalid parameters");
                 }
                 if(tree.getState().equals(TreeState.FIRE)){
+                    if(!isStillBurning) isStillBurning = true;
                     tree.nextState();
                     spreadFire(x,y,trees,probability);
                 }
                 
             }
-        }  
+        } 
+        return isStillBurning;
     }
 
+    /**
+     * Set all trees in INIT_FIRE state to next state (FIRE).
+     * @param trees
+     */
     private void setInitFireTreeToFire(Tree[][] trees) {
         Arrays.stream(trees)
         .flatMap(treeRows->Arrays.stream(treeRows))
@@ -49,6 +70,13 @@ public class ISimulationServiceImpl implements ISimulationService{
         });
     }
 
+    /**
+     * Set neighbors of coordinates (x,y) to next state (INIT_FIRE) with probability passed in parameters.
+     * @param x
+     * @param y
+     * @param trees
+     * @param probability
+     */
     private void spreadFire(int x, int y, Tree[][] trees, float probability) {
         if(isIndexCorrect(trees,x,y+1) 
             && trees[y+1][x].getState().equals(TreeState.INITIAL) 
@@ -79,6 +107,8 @@ public class ISimulationServiceImpl implements ISimulationService{
     private boolean isProbabilityCheck(float probability){
         return (new Random().nextFloat() <= probability);
     }
+
+    
 
     
 

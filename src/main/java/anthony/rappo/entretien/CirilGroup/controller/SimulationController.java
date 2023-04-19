@@ -23,50 +23,36 @@ public class SimulationController {
     @Autowired
     private ISimulationService simulationService;
     
-    @GetMapping("/test")
-    public void test() {
-        Forest f = new Forest();
-        f.setProbability(0.5f);
-        Tree[][] trees = new Tree[5][5];
-        for(int y=0;y<5;y++){
-            for(int x=0;x<5;x++){
-                trees[y][x] = new Tree(TreeState.INITIAL);
-            }
-        }
-        trees[1][3] = new Tree(TreeState.FIRE);
-        f.setTrees(trees);
-        displayTrees(f.getTrees());
-        nextStep(f);
-        displayTrees(f.getTrees());
-        nextStep(f);
-        displayTrees(f.getTrees());
-        nextStep(f);
-        displayTrees(f.getTrees());
-        nextStep(f);
-        displayTrees(f.getTrees());
-       
-    }
-
-    private void displayTrees(Tree[][] trees) {
-        for(int y=0;y<5;y++){
-            for(int x=0;x<5;x++){
-                System.out.print(trees[y][x].getState().name().charAt(0)+" ");
-            }
-            System.out.println("");
-        }
-        System.out.println("//////////////////////////////");
-    }
-
+    /**
+     * Return a Tree[][] corresponding to the next step of the fire propagation.
+     * Same Tree[][] is returned if the no Trees are in fire.
+     * @param forest With non null trees and 0<=probability<=1
+     */
     @PostMapping("/step")
-    public void nextStep(@RequestBody Forest forest){
+    public Tree[][] nextStep(@RequestBody Forest forest){
         if(!isForestOk(forest)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error, invalid parameters");
         }
         simulationService.nextStep(forest);
+        return forest.getTrees();
+    }
+
+    /**
+     * Return a Tree[][] corresponding to the last step of the fire propagation.
+     * Same Tree[][] is returned if the no Trees are in fire.
+     * @param forest With non null trees and 0<=probability<=1
+     */
+    @PostMapping("/steps")
+    public Tree[][] allSteps(@RequestBody Forest forest){
+        if(!isForestOk(forest)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error, invalid parameters");
+        }
+        simulationService.allSteps(forest);
+        return forest.getTrees();
     }
 
     private boolean isForestOk(Forest forest){
-        return (Objects.nonNull(forest.getTrees()) && forest.getProbability()>=0 && forest.getProbability()<=1);
+        return (Objects.nonNull(forest) && Objects.nonNull(forest.getTrees()) && forest.getProbability()>=0 && forest.getProbability()<=1);
     }
 
 }

@@ -1,6 +1,5 @@
 package anthony.rappo.entretien.CirilGroup.utils;
 
-import anthony.rappo.entretien.CirilGroup.model.Forest;
 import anthony.rappo.entretien.CirilGroup.model.Tree;
 import anthony.rappo.entretien.CirilGroup.model.enumerations.TreeState;
 

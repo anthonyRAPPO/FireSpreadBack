@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import anthony.rappo.entretien.CirilGroup.model.Forest;
 import anthony.rappo.entretien.CirilGroup.model.Tree;
-import anthony.rappo.entretien.CirilGroup.model.enumerations.TreeState;
 import anthony.rappo.entretien.CirilGroup.utils.UnitTestUtils;
 
 @SpringBootTest

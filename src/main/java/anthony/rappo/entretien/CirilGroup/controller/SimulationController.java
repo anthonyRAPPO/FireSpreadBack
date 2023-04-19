@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import anthony.rappo.entretien.CirilGroup.model.Forest;
 import anthony.rappo.entretien.CirilGroup.model.Tree;
-import anthony.rappo.entretien.CirilGroup.model.enumerations.TreeState;
 import anthony.rappo.entretien.CirilGroup.service.interfaces.ISimulationService;
 
 @RestController
